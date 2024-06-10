@@ -1,0 +1,6 @@
+[pgdg92-archive]
+name=PostgreSQL 10 RPMs for RHEL/CentOS 6
+baseurl=https://yum-archive.postgresql.org/10/redhat/rhel-6-x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.postgresql.org/keys/RPM-GPG-KEY-PGDG

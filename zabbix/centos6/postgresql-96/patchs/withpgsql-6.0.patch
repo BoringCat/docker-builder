@@ -1,0 +1,11 @@
+--- a/zabbix.spec	2024-05-21 07:00:30.000000000 +0000
++++ b/zabbix.spec	2024-06-10 11:41:49.317976758 +0000
+@@ -550,7 +550,7 @@
+ %if 0%{?build_proxy}
+ 	--enable-proxy
+ %endif
+-	--with-postgresql
++	--with-postgresql=/usr/pgsql-9.6/bin/pg_config
+ "
+ 
+ if [ -z "$build_conf_3" ]; then

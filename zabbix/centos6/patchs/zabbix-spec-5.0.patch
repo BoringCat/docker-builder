@@ -1,0 +1,85 @@
+--- a/zabbix.spec	2024-06-10 21:24:57.654660448 +0800
++++ b/zabbix.spec	2024-06-10 21:46:15.990079116 +0800
+@@ -511,6 +511,8 @@
+ Zabbix frontend configuration for nginx (scl version)
+ %endif
+ # rhel == 7
++%endif
++# rhel >= 7
+ 
+ %package java-gateway
+ Summary:		Zabbix java gateway
+@@ -536,8 +538,6 @@
+ 
+ %description java-gateway
+ Zabbix java gateway
+-%endif
+-# rhel >= 7
+ 
+ %prep
+ %setup0 -q -n %{name}-%{version}%{?alphatag}
+@@ -823,8 +823,12 @@
+ cat %{SOURCE3} | sed \
+ 	-e 's|COMPONENT|server|g' \
+ 	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-server
++%if 0%{?rhel} >= 7
+ install -Dm 0644 -p %{SOURCE11} $RPM_BUILD_ROOT%{_unitdir}/zabbix-server.service
+ install -Dm 0644 -p %{SOURCE15} $RPM_BUILD_ROOT%{_prefix}/lib/tmpfiles.d/zabbix-server.conf
++%else
++install -Dm 0755 -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %endif
+ 
+ 
+@@ -881,8 +885,12 @@
+ cat src/zabbix_java/settings.sh | sed \
+ 	-e 's|^PID_FILE=.*|PID_FILE="/var/run/zabbix/zabbix_java.pid"|g' \
+ 	> $RPM_BUILD_ROOT%{_sysconfdir}/zabbix/zabbix_java_gateway.conf
++%if 0%{?rhel} >= 7
+ install -Dm 0644 -p %{SOURCE13} $RPM_BUILD_ROOT%{_unitdir}/zabbix-java-gateway.service
+ install -Dm 0644 -p %{SOURCE15} $RPM_BUILD_ROOT%{_prefix}/lib/tmpfiles.d/zabbix-java-gateway.conf
++%else
++install -Dm 0755 -p %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/zabbix-java-gateway
++%endif
+ %endif
+ 
+ %clean
+@@ -1179,8 +1187,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_server.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-server.service
+ %{_prefix}/lib/tmpfiles.d/zabbix-server.conf
++%else
++%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %{_sbindir}/zabbix_server_mysql
+ 
+ %pre server-mysql
+@@ -1224,8 +1236,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_server.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-server.service
+ %{_prefix}/lib/tmpfiles.d/zabbix-server.conf
++%else
++%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %{_sbindir}/zabbix_server_pgsql
+ 
+ %pre server-pgsql
+@@ -1398,8 +1414,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_datadir}/zabbix-java-gateway
+ %{_sbindir}/zabbix_java_gateway
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-java-gateway.service
+ %{_prefix}/lib/tmpfiles.d/zabbix-java-gateway.conf
++%else
++%{_sysconfdir}/init.d/zabbix-java-gateway
++%endif
+ %config(noreplace) %{_sysconfdir}/zabbix/zabbix_java_gateway_logback.xml
+ 
+ %pre java-gateway
