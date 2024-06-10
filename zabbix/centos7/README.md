@@ -1,9 +1,9 @@
 ## Zabbix / Centos7 <!-- omit in toc -->
 
-- [经过测试的版本](#经过测试的版本)
+- [经过编译测试的版本](#经过编译测试的版本)
 
 
-### 经过测试的版本
+### 经过编译测试的版本
 - [zabbix-6.0.30-release1.el7.src.rpm](https://repo.zabbix.com/zabbix/6.0/rhel/7/SRPMS/zabbix-6.0.30-release1.el7.src.rpm)
   | build-arg | arg-value |
   |     :-    |     :-    |
