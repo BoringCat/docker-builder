@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 ARG MYSQL_KEY
 ARG MYSQL_VERSION
 RUN --mount=type=cache,target=/var/cache set -xe\
- && sudo rpm -ivh https://repo.mysql.com/${MYSQL_VERSION}-community-release-el7-7.noarch.rpm\
+ && sudo rpm -ivh https://repo.mysql.com/${MYSQL_VERSION}-community-release-el7.rpm\
  && if [ ! -z "${MYSQL_KEY}" ]; then curl https://repo.mysql.com/${MYSQL_KEY}\
     | sudo tee /etc/pki/rpm-gpg/${MYSQL_KEY}\
     | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql > /dev/null;\

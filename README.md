@@ -2,5 +2,5 @@
 
 ### 基本使用方式
 ```sh
-docker build --build-arg foo=doo --output 'type=local,dest=./dist/' 
+docker build --build-arg foo=doo --output 'type=local,dest=./dist/' .
 ```
