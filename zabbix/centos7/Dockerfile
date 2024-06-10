@@ -31,11 +31,26 @@ RUN --mount=type=cache,target=/var/cache set -xe\
  && rpm -ivh ${ZABBIX_SRC}\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/zabbix.spec
 
+ARG ZABBIX_BUILD_AGENT=1
+ARG ZABBIX_BUILD_AGENT2=1
+ARG ZABBIX_BUILD_FRONTEND=1
+ARG ZABBIX_BUILD_JAVA_GATEWAY=1
+ARG ZABBIX_BUILD_PROXY=1
+ARG ZABBIX_BUILD_SERVER=1
+ARG ZABBIX_WITH_MYSQL=1
+ARG ZABBIX_WITH_PGSQL=1
+ARG ZABBIX_WITH_SQLITE=1
 RUN set -xe\
  && rpmbuild -ba ~/rpmbuild/SPECS/zabbix.spec\
-    -D 'build_agent 1' -D 'build_agent2 1' -D 'build_frontend 1' -D 'build_java_gateway 1'\
-    -D 'build_proxy 1' -D 'build_server 1' -D 'build_with_mysql 1' -D 'build_with_pgsql 1'\
-    -D 'build_with_sqlite 1'
+    -D "build_agent ${ZABBIX_BUILD_AGENT}"\
+    -D "build_agent2 ${ZABBIX_BUILD_AGENT2}"\
+    -D "build_frontend ${ZABBIX_BUILD_FRONTEND}"\
+    -D "build_java_gateway ${ZABBIX_BUILD_JAVA_GATEWAY}"\
+    -D "build_proxy ${ZABBIX_BUILD_PROXY}"\
+    -D "build_server ${ZABBIX_BUILD_SERVER}"\
+    -D "build_with_mysql ${ZABBIX_WITH_MYSQL}"\
+    -D "build_with_pgsql ${ZABBIX_WITH_PGSQL}"\
+    -D "build_with_sqlite ${ZABBIX_WITH_SQLITE}"
 
 FROM scratch AS exporter
 COPY --from=builder /home/packager/rpmbuild/RPMS /RPMS
