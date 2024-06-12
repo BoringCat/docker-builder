@@ -1,0 +1,25 @@
+--- a/javapackages-tools.spec	2019-05-30 21:29:19.000000000 +0000
++++ b/javapackages-tools.spec	2023-02-27 11:44:40.248813074 +0000
+@@ -171,7 +171,13 @@
+ %if %{with xmvn_javadoc}
+ sed -i 's|mvn_build.py|& --xmvn-javadoc|' $(find %{buildroot} -name 'macros*.fjava')
+ %endif
++mkdir %{buildroot}/usr/java
++sed '1i\%dir /usr/java' -i files-filesystem
+ sed -e 's/.[17]$/&*/' -i files-*
++echo '%exclude /usr/share/java-utils/*.pyc' >> files-tools
++echo '%exclude /usr/share/java-utils/*.pyo' >> files-tools
++echo '%exclude /usr/share/java-utils/*.pyc' >> files-local
++echo '%exclude /usr/share/java-utils/*.pyo' >> files-local
+ 
+ %if %{without gradle}
+ rm -rf %{buildroot}%{_bindir}/gradle-local
+@@ -183,6 +189,8 @@
+ %if !0%{?_module_build}
+ %check
+ ./check
++find %{buildroot} -name '*.pyc' -delete
++find %{buildroot} -name '*.pyo' -delete
+ %endif
+ %endif
+ 
