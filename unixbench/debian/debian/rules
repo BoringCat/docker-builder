@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+BUILD_ROOT = debian/unixbench
+
+%:
+	dh $@  --sourcedirectory=UnixBench
+
+override_dh_auto_install:
+	install -d $(BUILD_ROOT)/opt/unixbench
+	install -d $(BUILD_ROOT)/usr/bin
+	install -t $(BUILD_ROOT)/usr/bin debian/ubench
+	cp -rv UnixBench/pgms $(BUILD_ROOT)/opt/unixbench/
+	cp -rv UnixBench/results $(BUILD_ROOT)/opt/unixbench/
+	cp -rv UnixBench/testdir $(BUILD_ROOT)/opt/unixbench/
+	cp -rv UnixBench/tmp $(BUILD_ROOT)/opt/unixbench/
+	cp -rv UnixBench/Run $(BUILD_ROOT)/opt/unixbench/
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 755 $(BUILD_ROOT)/usr/bin/ubench
+	chmod 755 $(BUILD_ROOT)/opt/unixbench/Run
+	chmod ugoa+w $(BUILD_ROOT)/opt/unixbench/results
+	chmod ugoa+w $(BUILD_ROOT)/opt/unixbench/testdir
+	chmod ugoa+w $(BUILD_ROOT)/opt/unixbench/tmp
