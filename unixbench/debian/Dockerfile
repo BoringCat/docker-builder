@@ -1,9 +1,18 @@
 ARG DEBIAN_RELEASE
 FROM debian:${DEBIAN_RELEASE} as debian-env
 
+ARG ENABLE_BACKPORTS
+ARG BACKPORTS_URL=http://deb.debian.org/debian
 RUN --mount=type=cache,target=/var/cache set -xe\
  && . /etc/os-release\
- && echo "deb http://deb.debian.org/debian ${VERSION_CODENAME}-backports main" >> /etc/apt/sources.list\
+ && if [ ! -z "${ENABLE_BACKPORTS}" ]; then\
+    echo 'Types: deb'\
+        "\nURIs: ${BACKPORTS_URL}"\
+        "\nSuites: ${VERSION_CODENAME}-backports"\
+        '\nComponents: main'\
+        '\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg'\
+        | tee /etc/apt/sources.list.d/backports.sources;\
+ fi\
  && echo 'Acquire::EnableSrvRecords "false";' > /etc/apt/apt.conf.d/docker-no-srv\
  && apt-get update\
  && apt-get install -y build-essential fakeroot devscripts sudo ca-certificates unzip wget curl vim\
