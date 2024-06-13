@@ -1,0 +1,27 @@
+diff -ruN a/Run b/Run
+--- a/Run	2011-01-17 23:44:53.000000000 -0700
++++ b/Run	2015-03-14 15:17:39.000000000 -0600
+@@ -874,14 +874,14 @@
+     $ENV{'LANG'} = $language;
+ 
+     # Check that the required files are in the proper places.
+-    my $make = $ENV{MAKE} || "make";
+-    system("$make check");
+-    if ($? != 0) {
+-        system("$make all");
+-        if ($? != 0) {
+-            abortRun("\"$make all\" failed");
+-        }
+-    }
++#    my $make = $ENV{MAKE} || "make";
++#    system("$make check");
++#    if ($? != 0) {
++#        system("$make all");
++#        if ($? != 0) {
++#            abortRun("\"$make all\" failed");
++#        }
++#    }
+ 
+     # Create a script to kill this run.
+     system("echo \"kill -9 $$\" > \"${TMPDIR}/kill_run\"");
+
