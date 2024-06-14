@@ -57,6 +57,8 @@ RUN set -xe\
  && sed -e "s~debian10~debian${VERSION_ID}~g"\
     -e "s~buster~${VERSION_CODENAME}~g"\
     debian/changelog -i\
+ && sed -e '/WITH_SSL/s/.*/\t\t-WITH_SSL=system \\/g'\
+    debian/rules -i\
  && echo "patch-innodb_engine-fcommon.diff" >> debian/patches/series\
  && mv -v /tmp/patch-innodb_engine-fcommon.diff debian/patches/patch-innodb_engine-fcommon.diff\
  && patch -p1 -i debian/patches/patch-innodb_engine-fcommon.diff\
