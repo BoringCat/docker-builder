@@ -35,7 +35,7 @@ RUN set -xe\
  && curl -L https://dev.mysql.com/get/Downloads/MySQL-${MYSQL_MINOR}/mysql-boost-${MYSQL_VERSION}.tar.gz -o /tmp/mysql-boost-${MYSQL_VERSION}.tar.gz\
  && sudo mkdir -p /usr/global/share\
  && cd /usr/global/share\
- && sudo tar xf /tmp/mysql-boost-${MYSQL_VERSION}.tar.gz mysql-5.7.42/boost --strip-components=2\
+ && sudo tar xf /tmp/mysql-boost-${MYSQL_VERSION}.tar.gz mysql-${MYSQL_VERSION}/boost --strip-components=2\
  && cd ~/sources\
  && . /etc/os-release\
  && if [ "${VERSION_CODENAME}" != "buster" ]; then sed 's/dh-systemd//g' mysql-community-${MYSQL_VERSION}/debian/control -i; fi\
