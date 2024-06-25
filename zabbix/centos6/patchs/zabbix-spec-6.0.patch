@@ -1,6 +1,125 @@
 --- a/zabbix.spec	2024-05-21 07:00:30.000000000 +0000
-+++ b/zabbix.spec	2024-06-10 12:48:09.000000000 +0000
-@@ -759,8 +759,12 @@
++++ b/zabbix.spec	2024-06-24 04:39:11.025132854 +0000
+@@ -185,9 +185,16 @@
+ Summary:		Zabbix web service
+ Group:			Applications/Internet
+ Requires:		logrotate
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(preun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ 
+ %description web-service
+ Zabbix web servce for performing various tasks using headless web browser.
+@@ -231,9 +238,16 @@
+ Summary:		Zabbix proxy for MySQL or MariaDB database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -244,9 +258,16 @@
+ Summary:		Zabbix proxy for PostgreSQL database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -257,9 +278,16 @@
+ Summary:		Zabbix proxy for SQLite3 database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -272,9 +300,16 @@
+ Summary:		Zabbix server for MySQL or MariaDB database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ 
+@@ -285,9 +320,16 @@
+ Summary:		Zabbix server for PostgresSQL database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ %description server-pgsql
+@@ -387,9 +429,16 @@
+ Summary:		Zabbix java gateway
+ Group:			Applications/Internet
+ Requires:		java-headless >= 1.6.0
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ 
+ %description java-gateway
+ Zabbix java gateway
+@@ -759,8 +808,12 @@
  cat %{SOURCE3} | sed \
  	-e 's|COMPONENT|proxy|g' \
  	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-proxy
@@ -13,7 +132,7 @@
  %endif
  
  
-@@ -772,8 +776,12 @@
+@@ -772,8 +825,12 @@
  cat %{SOURCE3} | sed \
  	-e 's|COMPONENT|server|g' \
  	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-server
@@ -26,7 +145,7 @@
  %endif
  
  
-@@ -796,8 +804,12 @@
+@@ -796,8 +853,12 @@
  mv $RPM_BUILD_ROOT%{_sbindir}/zabbix_java/lib/logback.xml $RPM_BUILD_ROOT%{_sysconfdir}/zabbix/zabbix_java_gateway_logback.xml
  rm $RPM_BUILD_ROOT%{_sbindir}/zabbix_java/lib/logback-console.xml
  mv $RPM_BUILD_ROOT%{_sbindir}/zabbix_java $RPM_BUILD_ROOT%{_datadir}/zabbix-java-gateway
@@ -39,7 +158,7 @@
  %endif
  
  
-@@ -1031,8 +1043,12 @@
+@@ -1031,8 +1092,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_proxy.8*
@@ -52,7 +171,7 @@
  %{_sbindir}/zabbix_proxy_mysql
  
  %pre proxy-mysql
-@@ -1043,21 +1059,36 @@
+@@ -1043,21 +1108,36 @@
  :
  
  %post proxy-mysql
@@ -89,7 +208,7 @@
  :
  %endif
  
-@@ -1072,8 +1103,12 @@
+@@ -1072,8 +1152,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_proxy.8*
@@ -102,7 +221,7 @@
  %{_sbindir}/zabbix_proxy_pgsql
  
  %pre proxy-pgsql
-@@ -1084,21 +1119,36 @@
+@@ -1084,21 +1168,36 @@
  :
  
  %post proxy-pgsql
@@ -139,7 +258,7 @@
  :
  %endif
  
-@@ -1113,8 +1163,12 @@
+@@ -1113,8 +1212,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_proxy.8*
@@ -152,7 +271,7 @@
  %{_sbindir}/zabbix_proxy_sqlite3
  
  %pre proxy-sqlite3
-@@ -1125,21 +1179,36 @@
+@@ -1125,21 +1228,36 @@
  :
  
  %post proxy-sqlite3
@@ -189,7 +308,7 @@
  :
  %endif
  %endif
-@@ -1157,8 +1226,12 @@
+@@ -1157,8 +1275,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_server.8*
@@ -202,7 +321,7 @@
  %{_sbindir}/zabbix_server_mysql
  
  %pre server-mysql
-@@ -1169,21 +1242,36 @@
+@@ -1169,21 +1291,36 @@
  :
  
  %post server-mysql
@@ -239,7 +358,7 @@
  :
  %endif
  
-@@ -1199,8 +1287,12 @@
+@@ -1199,8 +1336,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_server.8*
@@ -252,7 +371,7 @@
  %{_sbindir}/zabbix_server_pgsql
  
  %pre server-pgsql
-@@ -1211,21 +1303,36 @@
+@@ -1211,21 +1352,36 @@
  :
  
  %post server-pgsql
@@ -289,7 +408,7 @@
  :
  %endif
  %endif
-@@ -1341,8 +1448,12 @@
+@@ -1341,8 +1497,12 @@
  %{_datadir}/zabbix-java-gateway
  %{_sbindir}/zabbix_java_gateway_startup
  %{_sbindir}/zabbix_java_gateway_shutdown
@@ -302,7 +421,7 @@
  %config(noreplace) %{_sysconfdir}/zabbix/zabbix_java_gateway_logback.xml
  
  %pre java-gateway
-@@ -1353,17 +1464,32 @@
+@@ -1353,17 +1513,32 @@
  :
  
  %post java-gateway
@@ -314,8 +433,8 @@
  :
  
  %preun java-gateway
-+%if 0%{?rhel} >= 7
  if [ $1 -eq 0 ]; then
++%if 0%{?rhel} >= 7
  %systemd_preun zabbix-java-gateway.service
 +%else
 +/sbin/service zabbix-java-gateway stop >/dev/null 2>&1

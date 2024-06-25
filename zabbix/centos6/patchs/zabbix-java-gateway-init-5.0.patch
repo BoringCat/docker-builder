@@ -1,0 +1,11 @@
+--- a/zabbix-java-gateway.init	2024-06-24 09:27:44.388879049 +0000
++++ b/zabbix-java-gateway.init	2024-06-24 09:27:56.898831255 +0000
+@@ -31,7 +31,7 @@
+ [ ${NETWORKING} = "no" ] && exit 0
+ 
+ RETVAL=0
+-EXECDIR=/usr/sbin/zabbix_java
++EXECDIR=/usr/share/zabbix-java-gateway
+ 
+ case "$1" in
+     start)

@@ -1,6 +1,40 @@
---- a/zabbix.spec	2024-06-10 21:24:57.654660448 +0800
-+++ b/zabbix.spec	2024-06-10 21:46:15.990079116 +0800
-@@ -511,6 +511,8 @@
+--- a/zabbix.spec	2024-06-24 04:42:46.216086286 +0000
++++ b/zabbix.spec	2024-06-24 04:44:07.826703948 +0000
+@@ -255,9 +255,16 @@
+ Summary:		Zabbix server for MySQL or MariaDB database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ %if 0%{?rhel} <= 8
+@@ -272,9 +279,16 @@
+ Summary:		Zabbix server for PostgresSQL database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ %if 0%{?rhel} <= 8
+@@ -511,6 +525,8 @@
  Zabbix frontend configuration for nginx (scl version)
  %endif
  # rhel == 7
@@ -9,7 +43,7 @@
  
  %package java-gateway
  Summary:		Zabbix java gateway
-@@ -536,8 +538,6 @@
+@@ -536,8 +552,6 @@
  
  %description java-gateway
  Zabbix java gateway
@@ -18,7 +52,7 @@
  
  %prep
  %setup0 -q -n %{name}-%{version}%{?alphatag}
-@@ -823,8 +823,12 @@
+@@ -823,8 +837,12 @@
  cat %{SOURCE3} | sed \
  	-e 's|COMPONENT|server|g' \
  	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-server
@@ -31,7 +65,7 @@
  %endif
  
  
-@@ -881,8 +885,12 @@
+@@ -881,8 +899,12 @@
  cat src/zabbix_java/settings.sh | sed \
  	-e 's|^PID_FILE=.*|PID_FILE="/var/run/zabbix/zabbix_java.pid"|g' \
  	> $RPM_BUILD_ROOT%{_sysconfdir}/zabbix/zabbix_java_gateway.conf
@@ -44,7 +78,7 @@
  %endif
  
  %clean
-@@ -1179,8 +1187,12 @@
+@@ -1179,8 +1201,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_server.8*
@@ -57,7 +91,7 @@
  %{_sbindir}/zabbix_server_mysql
  
  %pre server-mysql
-@@ -1224,8 +1236,12 @@
+@@ -1224,8 +1250,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_mandir}/man8/zabbix_server.8*
@@ -70,7 +104,7 @@
  %{_sbindir}/zabbix_server_pgsql
  
  %pre server-pgsql
-@@ -1398,8 +1414,12 @@
+@@ -1398,8 +1428,12 @@
  %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
  %{_datadir}/zabbix-java-gateway
  %{_sbindir}/zabbix_java_gateway
