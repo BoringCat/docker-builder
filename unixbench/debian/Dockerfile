@@ -1,5 +1,5 @@
 ARG DEBIAN_RELEASE
-FROM debian:${DEBIAN_RELEASE} as debian-env
+FROM debian:${DEBIAN_RELEASE} AS debian-env
 
 ARG ENABLE_BACKPORTS
 ARG BACKPORTS_URL=http://deb.debian.org/debian
@@ -23,7 +23,7 @@ USER packager
 WORKDIR /home/packager
 
 ARG UNIXBENCH_VERSION=5.1.3
-FROM debian-env as builder
+FROM debian-env AS builder
 COPY --chown=packager:packager debian /home/packager/unixbench-${UNIXBENCH_VERSION}/debian
 
 ARG COMMIT_SHA=a07fcc03264915c624f0e4818993c5b4df3fa703

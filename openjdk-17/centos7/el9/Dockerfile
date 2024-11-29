@@ -1,5 +1,5 @@
 
-FROM quay.io/centos/centos:stream9 as spec-generator
+FROM quay.io/centos/centos:stream9 AS spec-generator
 RUN --mount=type=cache,target=/var/cache set -xe\
  && dnf install -y rpmdevtools wget\
  && groupadd mock\
@@ -35,7 +35,7 @@ RUN set -xe\
 ## /%package debug/,/^$/d: centos7 的 rpm-build 默认就有 debuginfo 配置
 ## s~-specs=\S*-annobin-\w*~~g: centos7 的 redhat-rpm-config 没有 annobin
 
-FROM quay.io/centos/centos:7 as centos7-env
+FROM quay.io/centos/centos:7 AS centos7-env
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
@@ -47,7 +47,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER mockbuild
 WORKDIR /home/mockbuild
 
-FROM centos7-env as builder
+FROM centos7-env AS builder
 
 # 安装 gcc-11
 RUN --mount=type=cache,target=/var/cache set -xe\

@@ -1,5 +1,5 @@
 ARG DEBIAN_RELEASE
-FROM debian:${DEBIAN_RELEASE} as debian-env
+FROM debian:${DEBIAN_RELEASE} AS debian-env
 
 ARG ENABLE_BACKPORTS
 ARG BACKPORTS_URL=http://deb.debian.org/debian
@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER packager
 WORKDIR /home/packager
 
-FROM debian-env as builder
+FROM debian-env AS builder
 
 ARG MYSQL_RELEASE=5.7.42-1debian10
 ARG MYSQL_VERSION=5.7.44

@@ -1,4 +1,4 @@
-FROM centos:7 as centos7-env
+FROM centos:7 AS centos7-env
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER packager
 WORKDIR /home/packager
 
-FROM centos7-env as builder
+FROM centos7-env AS builder
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && sudo yum install -y sqlite-devel libxml2-devel OpenIPMI-devel libssh2-devel pcre2-devel\

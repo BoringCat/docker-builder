@@ -1,4 +1,4 @@
-FROM quay.io/centos/centos:7 as centos7-env
+FROM quay.io/centos/centos:7 AS centos7-env
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER mockbuild
 WORKDIR /home/mockbuild
 
-FROM centos7-env as builder
+FROM centos7-env AS builder
 
 # # 安装依赖
 # RUN --mount=type=cache,target=/var/cache set -xe\

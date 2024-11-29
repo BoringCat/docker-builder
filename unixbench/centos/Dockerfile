@@ -1,6 +1,6 @@
 
 ARG CENTOS_RELEASE
-FROM quay.io/centos/centos:${CENTOS_RELEASE} as centos-env
+FROM quay.io/centos/centos:${CENTOS_RELEASE} AS centos-env
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && yum install -y '@Development Tools' rpmdevtools yum-utils sudo ca-certificates unzip wget curl vim epel-release\
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER mockbuild
 WORKDIR /home/mockbuild
 
-FROM centos-env as builder
+FROM centos-env AS builder
 COPY --chown=mockbuild:mock rpmbuild/ /home/mockbuild/rpmbuild/
 
 ARG COMMIT_SHA=a07fcc03264915c624f0e4818993c5b4df3fa703

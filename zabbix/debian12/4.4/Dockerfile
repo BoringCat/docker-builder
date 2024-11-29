@@ -1,4 +1,4 @@
-FROM debian:12 as base-env
+FROM debian:12 AS base-env
 
 RUN --mount=type=cache,target=/var/cache set -xe\
  && . /etc/os-release\
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
 USER packager
 WORKDIR /home/packager
 
-FROM base-env as builder
+FROM base-env AS builder
 ARG ZABBIX_VERSION=4.4.3
 ARG ZABBIX_RELEASE=1+buster
 RUN set -xe\
