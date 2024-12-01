@@ -2,4 +2,4 @@
 
 export UB_OUTPUT_CSV=1
 cd /opt/unixbench
-./Run $@ 2>/dev/null
+./Run $@
