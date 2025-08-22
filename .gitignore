@@ -1,8 +1,10 @@
 *.rpm
 *.deb
-*.tar.xz
+*.tar
+*.tar.*
 *.zip
 **/dist/
+**/source/
 *.log
 *.repo
 *.source

@@ -1,6 +1,6 @@
 FROM debian:11 AS base-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && . /etc/os-release\
  && echo "deb http://deb.debian.org/debian ${VERSION_CODENAME}-backports main" >> /etc/apt/sources.list\
  && echo 'Acquire::EnableSrvRecords "false";' > /etc/apt/apt.conf.d/docker-no-srv\
@@ -23,7 +23,7 @@ RUN set -xe\
  && mv -v zabbix-${ZABBIX_VERSION} ../zabbix-${ZABBIX_VERSION}\
  && cp -v zabbix_${ZABBIX_VERSION}*.tar.* ../
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo apt-get update\
  && sudo apt-get install -y golang-1.19\
  && sudo ln -sv /usr/lib/go-1.19/bin/* /usr/bin/\

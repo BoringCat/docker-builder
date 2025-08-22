@@ -2,7 +2,7 @@
 ARG CENTOS_RELEASE
 FROM quay.io/centos/centos:${CENTOS_RELEASE} AS centos-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && yum install -y '@Development Tools' rpmdevtools yum-utils sudo ca-certificates unzip wget curl vim epel-release\
  && groupadd mock\
  && useradd mockbuild -m -G mock\
@@ -16,7 +16,7 @@ FROM centos-env AS builder
 COPY --chown=mockbuild:mock rpmbuild/ /home/mockbuild/rpmbuild/
 
 ARG COMMIT_SHA=a07fcc03264915c624f0e4818993c5b4df3fa703
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/unixbench.spec\
  && spectool -d "commit_sha ${COMMIT_SHA}" -g -R ~/rpmbuild/SPECS/unixbench.spec
 

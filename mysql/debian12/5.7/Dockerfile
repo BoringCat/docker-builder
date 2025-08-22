@@ -3,7 +3,7 @@ FROM debian:${DEBIAN_RELEASE} AS debian-env
 
 ARG ENABLE_BACKPORTS
 ARG BACKPORTS_URL=http://deb.debian.org/debian
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && . /etc/os-release\
  && if [ ! -z "${ENABLE_BACKPORTS}" ]; then\
     echo 'Types: deb'\
@@ -60,7 +60,7 @@ RUN set -xe\
  && . /etc/os-release\
  && if [ "${VERSION_CODENAME}" != "buster" ]; then sed 's/dh-systemd//g' mysql-community-${MYSQL_VERSION}/debian/control -i; fi
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo apt-get update\
  && sudo apt-get install -y libncurses5-dev libssl-dev pkg-config\
  && mkdir deps/\

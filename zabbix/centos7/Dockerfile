@@ -1,6 +1,6 @@
 FROM centos:7 AS centos7-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
  && useradd packager -m\
  && echo "packager ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/packager\
@@ -11,14 +11,14 @@ WORKDIR /home/packager
 
 FROM centos7-env AS builder
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum install -y sqlite-devel libxml2-devel OpenIPMI-devel libssh2-devel pcre2-devel\
     unixODBC-devel net-snmp-devel gnutls-devel openssl-devel libcurl-devel libevent-devel\
     openldap-devel postgresql-devel mariadb-devel golang java-1.8.0-openjdk-devel
 
 ARG MYSQL_KEY
 ARG MYSQL_VERSION
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo rpm -ivh https://repo.mysql.com/${MYSQL_VERSION}-community-release-el7.rpm\
  && if [ ! -z "${MYSQL_KEY}" ]; then curl https://repo.mysql.com/${MYSQL_KEY}\
     | sudo tee /etc/pki/rpm-gpg/${MYSQL_KEY}\
@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/var/cache set -xe\
  && sudo yum install -y mysql-community-devel
 
 ARG ZABBIX_SRC
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && rpm -ivh ${ZABBIX_SRC}\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/zabbix.spec
 

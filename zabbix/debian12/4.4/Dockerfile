@@ -1,6 +1,6 @@
 FROM debian:12 AS base-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && . /etc/os-release\
  && sed -i "s~Suites:\( ${VERSION_CODENAME} .*\)~Suites:\1 ${VERSION_CODENAME}-backports~g" /etc/apt/sources.list.d/debian.sources\
  && echo 'Acquire::EnableSrvRecords "false";' > /etc/apt/apt.conf.d/docker-no-srv\
@@ -23,7 +23,7 @@ RUN set -xe\
  && mv -v zabbix-${ZABBIX_VERSION} ../zabbix-${ZABBIX_VERSION}\
  && cp -v zabbix_${ZABBIX_VERSION}*orig*.tar.* ../
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo apt-get update\
  && sudo apt-get install -y golang\
  && mkdir deps/\

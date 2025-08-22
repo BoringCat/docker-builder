@@ -1,6 +1,6 @@
 FROM quay.io/centos/centos:7 AS centos7-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
  && groupadd mock\
  && useradd mockbuild -m -G mock\
@@ -13,7 +13,7 @@ WORKDIR /home/mockbuild
 FROM centos7-env AS builder
 
 # 安装依赖
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum install -y python-devel
 
 # 安装源码包
@@ -22,7 +22,7 @@ RUN set -xe\
  && rpm -ivh ${JAVAPACKAGES_SOURCE}
 
 # 安装依赖
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/javapackages-tools.spec
 
 COPY ignore-python-tmpfile.patch /home/mockbuild/ignore-python-tmpfile.patch

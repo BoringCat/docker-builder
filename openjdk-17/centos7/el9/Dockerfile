@@ -1,6 +1,6 @@
 
 FROM quay.io/centos/centos:stream9 AS spec-generator
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && dnf install -y rpmdevtools wget\
  && groupadd mock\
  && useradd mockbuild -m -G mock
@@ -37,7 +37,7 @@ RUN set -xe\
 
 FROM quay.io/centos/centos:7 AS centos7-env
 
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
  && groupadd mock\
  && useradd mockbuild -m -G mock\
@@ -50,7 +50,7 @@ WORKDIR /home/mockbuild
 FROM centos7-env AS builder
 
 # 安装 gcc-11
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum install -y centos-release-scl.noarch centos-release-scl-rh.noarch\
  && sudo yum install -y devtoolset-11-gcc-c++ libstdc++-static redhat-rpm-config
 
@@ -74,7 +74,7 @@ RUN set -xe\
 
 # 安装依赖
 ARG JAVAPACKAGES_SOURCE
-RUN --mount=type=cache,target=/var/cache set -xe\
+RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo rpm -ivh ${JAVAPACKAGES_SOURCE}\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/java-17-openjdk.spec
 
