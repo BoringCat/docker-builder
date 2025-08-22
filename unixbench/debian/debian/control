@@ -6,7 +6,7 @@ Maintainer: BoringCat <25497484+BoringCat@users.noreply.github.com>
 Homepage: https://github.com/kdlucas/byte-unixbench
 
 Package: unixbench
-Depends: perl, grep, sh
+Depends: perl, grep, bash
 Build-Depends: gcc
 Architecture: any
 Description: UnixBench is the original BYTE UNIX benchmark suite

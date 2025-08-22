@@ -5,6 +5,7 @@
 *.zip
 **/dist/
 **/source/
+**/sources/
 *.log
 *.repo
 *.source
