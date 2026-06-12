@@ -1,0 +1,47 @@
+--- a/Modules/_hmacopenssl.c	2026-06-12 02:30:52.903686584 +0000
++++ b/Modules/_hmacopenssl.c	2026-06-12 02:48:07.762688467 +0000
+@@ -82,7 +82,7 @@
+     }
+ 
+     PyObject *name = NULL;
+-    HMAC_CTX *ctx = PyMem_RawCalloc(1, sizeof(HMAC_CTX));
++    HMAC_CTX *ctx = HMAC_CTX_new();
+     HmacObject *retval = NULL;
+ 
+     name = PyUnicode_FromFormat("hmac-%s", digestmod);
+@@ -140,7 +140,7 @@
+ {
+     HmacObject *retval;
+ 
+-    HMAC_CTX *ctx = PyMem_RawCalloc(1, sizeof(HMAC_CTX));
++    HMAC_CTX *ctx = HMAC_CTX_new();
+     if (ctx == NULL) {
+         return _setException(PyExc_ValueError);
+     }
+@@ -221,7 +221,7 @@
+ static unsigned int
+ _digest_size(HmacObject *self)
+ {
+-    const EVP_MD *md = self->ctx->md;
++    const EVP_MD *md = HMAC_CTX_get_md(self->ctx);
+     if (md == NULL) {
+         _setException(PyExc_ValueError);
+         return 0;
+@@ -232,7 +232,7 @@
+ static int
+ _digest(HmacObject *self, unsigned char *buf, unsigned int len)
+ {
+-    HMAC_CTX *temp_ctx = PyMem_RawCalloc(1, sizeof(HMAC_CTX));
++    HMAC_CTX *temp_ctx = HMAC_CTX_new();
+     if (temp_ctx == NULL) {
+         PyErr_NoMemory();
+         return 0;
+@@ -313,7 +313,7 @@
+ static PyObject *
+ _hmacopenssl_get_block_size(HmacObject *self, void *closure)
+ {
+-    const EVP_MD *md = self->ctx->md;
++    const EVP_MD *md = HMAC_CTX_get_md(self->ctx);
+     if (md == NULL) {
+         return _setException(PyExc_ValueError);
+     }
