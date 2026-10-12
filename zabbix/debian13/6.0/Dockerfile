@@ -16,11 +16,17 @@ FROM base-env AS builder
 ARG ZABBIX_VERSION
 ARG ZABBIX_PACKNUM=1
 ARG ZABBIX_SOURCE_RELEASE=12
+ARG OPENJDK_MAJOR=17
+ARG OPENJDK_VERSION=17.0.16+8-1~deb13u1_amd64
 # 传输源码
 COPY --chown=packager:packager\
     sources/zabbix_${ZABBIX_VERSION}-${ZABBIX_PACKNUM}+debian${ZABBIX_SOURCE_RELEASE}.dsc\
     sources/zabbix_${ZABBIX_VERSION}-${ZABBIX_PACKNUM}+debian${ZABBIX_SOURCE_RELEASE}.debian.tar.xz\
     sources/zabbix_${ZABBIX_VERSION}.orig.tar.gz\
+    sources/openjdk-${OPENJDK_MAJOR}-jdk_${OPENJDK_VERSION}.deb\
+    sources/openjdk-${OPENJDK_MAJOR}-jdk-headless_${OPENJDK_VERSION}.deb\
+    sources/openjdk-${OPENJDK_MAJOR}-jre_${OPENJDK_VERSION}.deb\
+    sources/openjdk-${OPENJDK_MAJOR}-jre-headless_${OPENJDK_VERSION}.deb\
     /home/packager/sources/
 
 # 安装依赖
@@ -32,17 +38,22 @@ RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && mkdir -p ~/deps/\
  && cd ~/deps/\
  && sudo apt-get update\
+ && sudo apt-get -y install ~/sources/openjdk-${OPENJDK_MAJOR}-*_${OPENJDK_VERSION}.deb\
  && sudo mk-build-deps -i --tool='apt-get -y' ~/zabbix-${ZABBIX_VERSION}/debian/control\
  && sudo apt-get -y install golang
 
 # sed修改
-## s~bullseye~${VERSION_CODENAME}~g" -e "s~deb11~deb${VERSION_ID}~g: 修改发行版名称
+## s~debian${ZABBIX_SOURCE_RELEASE}~debian${VERSION_ID}~g: 修改发行版名称
+## s~default-jre-headless~java-sdk-headless (>=${OPENJDK_MAJOR})~g: 修改JDK版本，根据构建版本来定
 
 # 构建
 RUN set -xe\
  && cd ~/zabbix-${ZABBIX_VERSION}\
  && . /etc/os-release\
- && sed -e "s~debian${ZABBIX_SOURCE_RELEASE}~debian${VERSION_ID}~g" debian/changelog -i\
+ && sed -i debian/changelog\
+    -e "s~debian${ZABBIX_SOURCE_RELEASE}~debian${VERSION_ID}~g"\
+ && sed -i debian/control\
+    -e "s~default-jre-headless~java-sdk-headless (>=${OPENJDK_MAJOR})~g"\
  && dpkg-buildpackage -us -uc
 
 FROM scratch AS exporter
