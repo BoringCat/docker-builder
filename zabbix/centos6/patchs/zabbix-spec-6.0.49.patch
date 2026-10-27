@@ -1,0 +1,456 @@
+--- a/zabbix.spec	2026-10-23 02:40:18.427040013 +0000
++++ b/zabbix.spec	2026-10-23 02:42:21.455443799 +0000
+@@ -194,9 +194,16 @@
+ Summary:		Zabbix web service
+ Group:			Applications/Internet
+ Requires:		logrotate
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(preun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ 
+ %description web-service
+ Zabbix web servce for performing various tasks using headless web browser.
+@@ -240,9 +247,16 @@
+ Summary:		Zabbix proxy for MySQL or MariaDB database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -253,9 +267,16 @@
+ Summary:		Zabbix proxy for PostgreSQL database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -266,9 +287,16 @@
+ Summary:		Zabbix proxy for SQLite3 database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-proxy = %{version}-%{release}
+ Provides:		zabbix-proxy-implementation = %{version}-%{release}
+ 
+@@ -281,9 +309,16 @@
+ Summary:		Zabbix server for MySQL or MariaDB database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ 
+@@ -294,9 +329,16 @@
+ Summary:		Zabbix server for PostgresSQL database
+ Group:			Applications/Internet
+ Requires:		fping
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ Provides:		zabbix-server = %{version}-%{release}
+ Provides:		zabbix-server-implementation = %{version}-%{release}
+ %description server-pgsql
+@@ -400,9 +442,16 @@
+ %else
+ Requires:		java-headless >= 1.8.0
+ %endif
++%if 0%{?rhel} >= 7
+ Requires(post):		systemd
+ Requires(preun):	systemd
+ Requires(postun):	systemd
++%else
++Requires(post):		/sbin/chkconfig
++Requires(preun):	/sbin/chkconfig
++Requires(preun):	/sbin/service
++Requires(postun):	/sbin/service
++%endif
+ 
+ %if 0%{?rhel} == 7 || 0%{?rhel} == 8
+ %package java-gateway-openjdk11
+@@ -814,8 +863,12 @@
+ cat %{SOURCE3} | sed \
+ 	-e 's|COMPONENT|proxy|g' \
+ 	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-proxy
++%if 0%{?rhel} >= 7
+ install -Dm 0644 -p %{SOURCE12} $RPM_BUILD_ROOT%{_unitdir}/zabbix-proxy.service
+ install -Dm 0644 -p %{SOURCE15} $RPM_BUILD_ROOT%{_tmpfilesdir}/zabbix-proxy.conf
++%else
++install -Dm 0755 -p %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/zabbix-proxy
++%endif
+ %endif
+ 
+ 
+@@ -827,8 +880,12 @@
+ cat %{SOURCE3} | sed \
+ 	-e 's|COMPONENT|server|g' \
+ 	> $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zabbix-server
++%if 0%{?rhel} >= 7
+ install -Dm 0644 -p %{SOURCE11} $RPM_BUILD_ROOT%{_unitdir}/zabbix-server.service
+ install -Dm 0644 -p %{SOURCE15} $RPM_BUILD_ROOT%{_tmpfilesdir}/zabbix-server.conf
++%else
++install -Dm 0755 -p %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %endif
+ 
+ 
+@@ -851,8 +908,12 @@
+ mv $RPM_BUILD_ROOT%{_sbindir}/zabbix_java/lib/logback.xml $RPM_BUILD_ROOT%{_sysconfdir}/zabbix/zabbix_java_gateway_logback.xml
+ rm $RPM_BUILD_ROOT%{_sbindir}/zabbix_java/lib/logback-console.xml
+ mv $RPM_BUILD_ROOT%{_sbindir}/zabbix_java $RPM_BUILD_ROOT%{_datadir}/zabbix-java-gateway
++%if 0%{?rhel} >= 7
+ install -Dm 0644 -p %{SOURCE13} $RPM_BUILD_ROOT%{_unitdir}/zabbix-java-gateway.service
+ install -Dm 0644 -p %{SOURCE15} $RPM_BUILD_ROOT%{_tmpfilesdir}/zabbix-java-gateway.conf
++%else
++install -Dm 0755 -p %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/init.d/zabbix-java-gateway
++%endif
+ %if 0%{?rhel} >= 7 && 0%{?rhel} <= 8
+ install -Dm 0755 -p %{SOURCE25} $RPM_BUILD_ROOT%{_sysconfdir}/zabbix/zabbix_java_gateway_openjdk11.env
+ %if 0%{?rhel} == 8
+@@ -1092,8 +1153,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_proxy.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-proxy.service
+ %{_tmpfilesdir}/zabbix-proxy.conf
++%else
++%{_sysconfdir}/init.d/zabbix-proxy
++%endif
+ %{_sbindir}/zabbix_proxy_mysql
+ 
+ %pre proxy-mysql
+@@ -1104,21 +1169,36 @@
+ :
+ 
+ %post proxy-mysql
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-proxy.service
++%else
++/sbin/chkconfig --add zabbix-proxy || :
++%endif
+ /usr/sbin/update-alternatives --install %{_sbindir}/zabbix_proxy \
+ 	zabbix-proxy %{_sbindir}/zabbix_proxy_mysql 10
+ :
+ 
+ %preun proxy-mysql
+ if [ "$1" = 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-proxy.service
++%else
++/sbin/service zabbix-proxy stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-proxy
++%endif
+ /usr/sbin/update-alternatives --remove zabbix-proxy \
+ %{_sbindir}/zabbix_proxy_mysql
+ fi
+ :
+ 
+ %postun proxy-mysql
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-proxy.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-proxy try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ %endif
+ 
+@@ -1133,8 +1213,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_proxy.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-proxy.service
+ %{_tmpfilesdir}/zabbix-proxy.conf
++%else
++%{_sysconfdir}/init.d/zabbix-proxy
++%endif
+ %{_sbindir}/zabbix_proxy_pgsql
+ 
+ %pre proxy-pgsql
+@@ -1145,21 +1229,36 @@
+ :
+ 
+ %post proxy-pgsql
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-proxy.service
++%else
++/sbin/chkconfig --add zabbix-proxy || :
++%endif
+ /usr/sbin/update-alternatives --install %{_sbindir}/zabbix_proxy \
+ 	zabbix-proxy %{_sbindir}/zabbix_proxy_pgsql 10
+ :
+ 
+ %preun proxy-pgsql
+ if [ "$1" = 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-proxy.service
++%else
++/sbin/service zabbix-proxy stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-proxy
++%endif
+ /usr/sbin/update-alternatives --remove zabbix-proxy \
+ 	%{_sbindir}/zabbix_proxy_pgsql
+ fi
+ :
+ 
+ %postun proxy-pgsql
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-proxy.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-proxy try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ %endif
+ 
+@@ -1174,8 +1273,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_proxy.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-proxy.service
+ %{_tmpfilesdir}/zabbix-proxy.conf
++%else
++%{_sysconfdir}/init.d/zabbix-proxy
++%endif
+ %{_sbindir}/zabbix_proxy_sqlite3
+ 
+ %pre proxy-sqlite3
+@@ -1186,21 +1289,36 @@
+ :
+ 
+ %post proxy-sqlite3
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-proxy.service
++%else
++/sbin/chkconfig --add zabbix-proxy || :
++%endif
+ /usr/sbin/update-alternatives --install %{_sbindir}/zabbix_proxy \
+ 	zabbix-proxy %{_sbindir}/zabbix_proxy_sqlite3 10
+ :
+ 
+ %preun proxy-sqlite3
+ if [ "$1" = 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-proxy.service
++%else
++/sbin/service zabbix-proxy stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-proxy
++%endif
+ /usr/sbin/update-alternatives --remove zabbix-proxy \
+ 	%{_sbindir}/zabbix_proxy_sqlite3
+ fi
+ :
+ 
+ %postun proxy-sqlite3
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-proxy.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-proxy try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ %endif
+ %endif
+@@ -1218,8 +1336,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_server.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-server.service
+ %{_tmpfilesdir}/zabbix-server.conf
++%else
++%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %{_sbindir}/zabbix_server_mysql
+ 
+ %pre server-mysql
+@@ -1230,21 +1352,36 @@
+ :
+ 
+ %post server-mysql
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-server.service
++%else
++/sbin/chkconfig --add zabbix-server || :
++%endif
+ /usr/sbin/update-alternatives --install %{_sbindir}/zabbix_server \
+ 	zabbix-server %{_sbindir}/zabbix_server_mysql 10
+ :
+ 
+ %preun server-mysql
+ if [ "$1" = 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-server.service
++%else
++/sbin/service zabbix-server stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-server
++%endif
+ /usr/sbin/update-alternatives --remove zabbix-server \
+ 	%{_sbindir}/zabbix_server_mysql
+ fi
+ :
+ 
+ %postun server-mysql
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-server.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-server try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ %endif
+ 
+@@ -1260,8 +1397,12 @@
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/log/zabbix
+ %attr(0755,zabbix,zabbix) %dir %{_localstatedir}/run/zabbix
+ %{_mandir}/man8/zabbix_server.8*
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-server.service
+ %{_tmpfilesdir}/zabbix-server.conf
++%else
++%{_sysconfdir}/init.d/zabbix-server
++%endif
+ %{_sbindir}/zabbix_server_pgsql
+ 
+ %pre server-pgsql
+@@ -1272,21 +1413,36 @@
+ :
+ 
+ %post server-pgsql
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-server.service
++%else
++/sbin/chkconfig --add zabbix-server || :
++%endif
+ /usr/sbin/update-alternatives --install %{_sbindir}/zabbix_server \
+ 	zabbix-server %{_sbindir}/zabbix_server_pgsql 10
+ :
+ 
+ %preun server-pgsql
+ if [ "$1" = 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-server.service
++%else
++/sbin/service zabbix-server stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-server
++%endif
+ /usr/sbin/update-alternatives --remove zabbix-server \
+ 	%{_sbindir}/zabbix_server_pgsql
+ fi
+ :
+ 
+ %postun server-pgsql
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-server.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-server try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ %endif
+ %endif
+@@ -1402,8 +1558,12 @@
+ %{_datadir}/zabbix-java-gateway
+ %{_sbindir}/zabbix_java_gateway_startup
+ %{_sbindir}/zabbix_java_gateway_shutdown
++%if 0%{?rhel} >= 7
+ %{_unitdir}/zabbix-java-gateway.service
+ %{_tmpfilesdir}/zabbix-java-gateway.conf
++%else
++%{_sysconfdir}/init.d/zabbix-java-gateway
++%endif
+ %config(noreplace) %{_sysconfdir}/zabbix/zabbix_java_gateway_logback.xml
+ 
+ %pre java-gateway
+@@ -1414,17 +1574,32 @@
+ :
+ 
+ %post java-gateway
++%if 0%{?rhel} >= 7
+ %systemd_post zabbix-java-gateway.service
++%else
++/sbin/chkconfig --add zabbix-java-gateway || :
++%endif
+ :
+ 
+ %preun java-gateway
+ if [ $1 -eq 0 ]; then
++%if 0%{?rhel} >= 7
+ %systemd_preun zabbix-java-gateway.service
++%else
++/sbin/service zabbix-java-gateway stop >/dev/null 2>&1
++/sbin/chkconfig --del zabbix-java-gateway
+ fi
++%endif
+ :
+ 
+ %postun java-gateway
++%if 0%{?rhel} >= 7
+ %systemd_postun_with_restart zabbix-java-gateway.service
++%else
++if [ $1 -ge 1 ]; then
++/sbin/service zabbix-java-gateway try-restart >/dev/null 2>&1 || :
++fi
++%endif
+ :
+ 
+ %if 0%{?rhel} == 7 || 0%{?rhel} == 8

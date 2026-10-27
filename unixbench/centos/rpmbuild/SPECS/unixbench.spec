@@ -2,7 +2,7 @@
 %global commit_sha a07fcc03264915c624f0e4818993c5b4df3fa703
 
 Name:    unixbench
-Version: 5.1.3
+Version: 6.0.1
 Release: 1%{?dist}
 Summary: The original BYTE UNIX benchmark suite
 License: GNU,GPLv2

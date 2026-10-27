@@ -1,7 +1,9 @@
 FROM centos:6 AS centos6-env
 
+COPY --chown=root:root yum.repos.d/ /etc/yum.repos.d/
+
 RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
- && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
+ && yum --disablerepo=epel install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
    yum-utils\
  && useradd packager -m\
  && echo "packager ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/packager\
@@ -19,11 +21,13 @@ RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
 
 ARG MYSQL_KEY
 ARG MYSQL_VERSION
-RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
- && sudo rpm -ivh https://repo.mysql.com/${MYSQL_VERSION}-community-release-el6.rpm\
- && if [ ! -z "${MYSQL_KEY}" ]; then curl https://repo.mysql.com/${MYSQL_KEY}\
-    | sudo tee /etc/pki/rpm-gpg/${MYSQL_KEY}\
-    | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql > /dev/null;\
+RUN --mount=type=cache,target=/var/cache,sharing=private\
+    --mount=source=sources/,target=/home/packager/sources/\
+    set -xe\
+ && sudo rpm -ivh /home/packager/sources/${MYSQL_VERSION}-community-release-el6.rpm\
+ && if [ ! -z "${MYSQL_KEY}" ]; then\
+        sudo cp /home/packager/sources/${MYSQL_KEY} /etc/pki/rpm-gpg/${MYSQL_KEY}\
+     && sudo cp /home/packager/sources/${MYSQL_KEY} /etc/pki/rpm-gpg/RPM-GPG-KEY-mysql;\
     fi\
  && sudo yum install -y mysql-community-devel
 
@@ -43,8 +47,10 @@ RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
 #  && rm go${GOLANG_VERSION}.linux-amd64.tar.gz
 
 ARG ZABBIX_SRC
-RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
- && rpm -ivh ${ZABBIX_SRC}\
+RUN --mount=type=cache,target=/var/cache,sharing=private\
+    --mount=source=sources/,target=/home/packager/sources/\
+    set -xe\
+ && rpm -ivh /home/packager/sources/${ZABBIX_SRC}\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/zabbix.spec
 
 COPY patchs/ /home/packager/patchs/

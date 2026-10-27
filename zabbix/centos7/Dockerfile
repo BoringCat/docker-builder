@@ -1,7 +1,9 @@
-FROM centos:7 AS centos7-env
+FROM quay.io/centos/centos:7 AS centos7-env
+
+COPY --chown=root:root yum.repos.d/ /etc/yum.repos.d/
 
 RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
- && yum install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
+ && yum --disablerepo=epel install -y '@Development Tools' rpmdevtools sudo ca-certificates unzip wget curl vim epel-release\
  && useradd packager -m\
  && echo "packager ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/packager\
  && sudo -u packager -i 'rpmdev-setuptree'
@@ -14,7 +16,7 @@ FROM centos7-env AS builder
 RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
  && sudo yum install -y sqlite-devel libxml2-devel OpenIPMI-devel libssh2-devel pcre2-devel\
     unixODBC-devel net-snmp-devel gnutls-devel openssl-devel libcurl-devel libevent-devel\
-    openldap-devel postgresql-devel mariadb-devel golang java-1.8.0-openjdk-devel
+    openldap-devel postgresql-devel mariadb-devel java-1.8.0-openjdk-devel
 
 ARG MYSQL_KEY
 ARG MYSQL_VERSION
@@ -26,9 +28,20 @@ RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
     fi\
  && sudo yum install -y mysql-community-devel
 
+ARG GO_VERSION
+RUN --mount=type=cache,target=/var/cache,sharing=private\
+    --mount=source=sources/,target=/home/packager/sources/\
+    set -xe\
+ && cd /usr/local\
+ && sudo tar xf /home/packager/sources/go${GO_VERSION}.linux-amd64.tar.gz
+
+ENV PATH=/usr/local/go/bin:${PATH}
+
 ARG ZABBIX_SRC
-RUN --mount=type=cache,target=/var/cache,sharing=private set -xe\
- && rpm -ivh ${ZABBIX_SRC}\
+RUN --mount=type=cache,target=/var/cache,sharing=private\
+    --mount=source=sources/,target=/home/packager/sources/\
+    set -xe\
+ && rpm -ivh /home/packager/sources/${ZABBIX_SRC}\
  && sudo yum-builddep -y ~/rpmbuild/SPECS/zabbix.spec
 
 ARG ZABBIX_BUILD_AGENT=1
@@ -41,6 +54,8 @@ ARG ZABBIX_WITH_MYSQL=1
 ARG ZABBIX_WITH_PGSQL=1
 ARG ZABBIX_WITH_SQLITE=1
 RUN set -xe\
+ && command -v go\
+ && go version\
  && rpmbuild -ba ~/rpmbuild/SPECS/zabbix.spec\
     -D "build_agent ${ZABBIX_BUILD_AGENT}"\
     -D "build_agent2 ${ZABBIX_BUILD_AGENT2}"\
